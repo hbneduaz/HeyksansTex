@@ -1,34 +1,41 @@
-<!-- index.html -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="az">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#07101f" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050914" />
   <title>Heyksans Technology • Platforma</title>
+
+  <!-- Font (opsional, işləməsə də sayt açılacaq) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <!-- BACKGROUND -->
-  <div class="bg">
+  <!-- Background layers -->
+  <div class="bg" aria-hidden="true">
     <div class="bg__grid"></div>
     <div class="bg__glow bg__glow--a"></div>
     <div class="bg__glow bg__glow--b"></div>
     <div class="bg__noise"></div>
   </div>
 
-  <!-- TOP BAR -->
+  <!-- Top / Navbar -->
   <header class="top">
     <div class="wrap top__row">
       <a class="brand" href="#" aria-label="Heyksans Technology">
-        <!-- Logo (repo-da /assets/logo.png qoy) -->
-        <img class="brand__logo" src="assets/logo.png" alt="HEYKSANS TECHNOLOGY loqosu" onerror="this.style.display='none';document.getElementById('brandFallback').style.display='flex';" />
+        <img
+          class="brand__logo"
+          src="assets/logo.png"
+          alt="Heyksans Technology loqosu"
+          onerror="this.style.display='none';document.getElementById('brandFallback').style.display='flex';"
+        />
         <span id="brandFallback" class="brand__fallback" style="display:none;">
-          <span class="brand__mark">H</span>
+          <span class="brand__mark">HT</span>
         </span>
 
         <span class="brand__text">
@@ -37,59 +44,70 @@
         </span>
       </a>
 
-      <nav class="top__actions">
-        <button class="btn btn--ghost" id="btnLogin">Giriş</button>
-        <button class="btn btn--primary" id="btnRegister">Qeydiyyat</button>
+      <nav class="top__actions" aria-label="Hesab">
+        <button class="btn btn--ghost" id="btnLogin" type="button">Giriş</button>
+        <button class="btn btn--primary" id="btnRegister" type="button">Qeydiyyat</button>
       </nav>
     </div>
   </header>
 
-  <!-- MAIN -->
+  <!-- Main -->
   <main class="wrap main">
     <!-- LEFT: Explorer -->
     <section class="panel panel--explore" aria-label="Kəşf et">
       <div class="panel__head">
-        <h1 class="h1">Kəşf et</h1>
-        <p class="muted">Peşəkarları axtar, profillərə bax və əlaqə qur.</p>
+        <h1 class="h1">Peşəkarlar</h1>
+        <p class="muted">Profil yarat, portfolio yerləşdir, müştəri ilə əlaqə qur.</p>
       </div>
 
       <!-- Search -->
-      <div class="search">
+      <div class="search" role="search">
         <span class="search__icon" aria-hidden="true">⌕</span>
-        <input id="q" class="search__input" type="search" placeholder="Ad, istifadəçi adı və ya kateqoriya üzrə axtar..." autocomplete="off" />
-        <button class="search__clear" id="clearSearch" title="Təmizlə" aria-label="Təmizlə">×</button>
+        <input
+          id="q"
+          class="search__input"
+          type="search"
+          placeholder="Ad, istifadəçi adı və ya kateqoriya üzrə axtar..."
+          autocomplete="off"
+        />
+        <button class="search__clear" id="clearSearch" type="button" title="Təmizlə" aria-label="Təmizlə">×</button>
       </div>
 
       <!-- Categories -->
       <div class="chips" id="chips" aria-label="Kateqoriyalar">
-        <!-- JS doldurur -->
+        <!-- JS dolduracaq -->
       </div>
 
-      <!-- Sections -->
+      <!-- List -->
       <div class="section">
         <div class="section__head">
-          <h2 class="h2">Son əlavə olunanlar</h2>
+          <h2 class="h2">Kataloq</h2>
           <span class="pill" id="resultCount">0</span>
         </div>
 
-        <div class="grid" id="grid">
+        <div class="grid" id="grid" aria-label="Profillər">
           <!-- JS kartlar -->
         </div>
       </div>
     </section>
 
-    <!-- RIGHT: Preview -->
-    <aside class="panel panel--preview" aria-label="Profil önizləmə">
+    <!-- RIGHT: Selected profile preview -->
+    <aside class="panel panel--preview" aria-label="Profil">
       <div class="preview__empty" id="emptyPreview">
         <div class="preview__badge">Seçilmiş profil</div>
         <h2 class="h2">Profil seç</h2>
-        <p class="muted">Soldakı siyahıdan bir profil seç. Burada tam görünüş açılacaq.</p>
+        <p class="muted">Soldan bir profil seç. Burada detalları açılacaq.</p>
+
+        <div class="emptyActions">
+          <button class="btn btn--primary" id="openAuthFromEmpty" type="button">Profil yarat</button>
+          <button class="btn btn--ghost" id="learnMore" type="button">Platforma qaydası</button>
+        </div>
       </div>
 
       <div class="preview" id="preview" hidden>
         <div class="preview__cover">
           <img id="pCover" alt="" />
-          <div class="preview__coverShade"></div>
+          <div class="preview__coverShade" aria-hidden="true"></div>
         </div>
 
         <div class="preview__body">
@@ -114,29 +132,32 @@
 
           <div class="bio" id="pBio">—</div>
 
-          <div class="divider"></div>
+          <div class="divider" aria-hidden="true"></div>
 
           <div class="section__head section__head--tight">
             <h3 class="h3">Portfolio</h3>
-            <button class="btn btn--ghost btn--sm" id="openProfile">Profilə keç</button>
+            <div class="rowBtns">
+              <button class="btn btn--ghost btn--sm" id="openProfile" type="button">Tam profil</button>
+              <button class="btn btn--primary btn--sm" id="orderBtn" type="button">Əlaqə</button>
+            </div>
           </div>
 
-          <div class="gallery" id="pGallery">
-            <!-- JS doldurur -->
+          <div class="gallery" id="pGallery" aria-label="Portfolio işləri">
+            <!-- JS dolduracaq -->
           </div>
         </div>
       </div>
     </aside>
   </main>
 
-  <!-- MODAL: Profile Page -->
+  <!-- Modal: Full profile page -->
   <div class="modal" id="modal" aria-hidden="true">
     <div class="modal__backdrop" id="modalBackdrop"></div>
 
     <div class="modal__card" role="dialog" aria-modal="true" aria-label="Profil">
       <div class="modal__head">
         <div class="modal__title" id="mTitle">Profil</div>
-        <button class="iconbtn iconbtn--close" id="closeModal" aria-label="Bağla">×</button>
+        <button class="iconbtn iconbtn--close" id="closeModal" type="button" aria-label="Bağla">×</button>
       </div>
 
       <div class="modal__content">
@@ -146,14 +167,27 @@
               <div class="profileHero__avatar">
                 <img id="mAvatar" alt="" />
               </div>
+
               <div class="profileHero__name" id="mName">—</div>
               <div class="profileHero__role" id="mRole">—</div>
+
               <div class="profileHero__tags" id="mTags"></div>
 
               <div class="profileHero__actions">
                 <a class="btn btn--primary btn--wide" id="mWhatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a>
                 <a class="btn btn--ghost btn--wide" id="mInstagram" href="#" target="_blank" rel="noopener">Instagram</a>
                 <a class="btn btn--ghost btn--wide" id="mEmail" href="#">E-mail</a>
+              </div>
+
+              <div class="miniInfo">
+                <div class="miniInfo__row">
+                  <span class="miniInfo__k">Profil</span>
+                  <span class="miniInfo__v" id="mUser">@—</span>
+                </div>
+                <div class="miniInfo__row">
+                  <span class="miniInfo__k">Kateqoriya</span>
+                  <span class="miniInfo__v" id="mCat">—</span>
+                </div>
               </div>
             </div>
           </div>
@@ -173,29 +207,30 @@
       </div>
 
       <div class="modal__foot">
-        <span class="muted">© Heyksans Technology</span>
+        <span class="muted">© CHH • Heyksans Technology</span>
+        <span class="muted" id="buildInfo">v1.0</span>
       </div>
     </div>
   </div>
 
-  <!-- AUTH MODAL (sadə UI) -->
+  <!-- Modal: Auth / Create Profile (UI) -->
   <div class="modal" id="authModal" aria-hidden="true">
     <div class="modal__backdrop" id="authBackdrop"></div>
 
-    <div class="modal__card modal__card--sm" role="dialog" aria-modal="true" aria-label="Giriş və Qeydiyyat">
+    <div class="modal__card modal__card--sm" role="dialog" aria-modal="true" aria-label="Hesab">
       <div class="modal__head">
         <div class="modal__title" id="authTitle">Giriş</div>
-        <button class="iconbtn iconbtn--close" id="authClose" aria-label="Bağla">×</button>
+        <button class="iconbtn iconbtn--close" id="authClose" type="button" aria-label="Bağla">×</button>
       </div>
 
       <div class="modal__content">
         <div class="auth">
           <div class="auth__tabs">
-            <button class="tab is-active" id="tabLogin">Giriş</button>
-            <button class="tab" id="tabRegister">Qeydiyyat</button>
+            <button class="tab is-active" id="tabLogin" type="button">Giriş</button>
+            <button class="tab" id="tabRegister" type="button">Qeydiyyat</button>
           </div>
 
-          <button class="btn btn--primary btn--wide auth__google" id="googleBtn">
+          <button class="btn btn--primary btn--wide auth__google" id="googleBtn" type="button">
             Google ilə davam et
           </button>
 
@@ -215,21 +250,40 @@
             <button class="btn btn--primary btn--wide" type="submit" id="authSubmit">Davam et</button>
           </form>
 
-          <p class="muted auth__note" id="authNote">
-            Qeyd: Bu demo UI-dir. Firebase qoşanda giriş real işləyəcək.
-          </p>
+          <div class="hint" id="authHint">
+            Qeyd: Bu HTML bazadır. Firebase qoşulanda giriş və profil real işləyəcək.
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <footer class="footer">
-    <div class="wrap footer__row">
-      <span class="muted">Powered by CHH • Heyksans Technology</span>
-      <span class="muted">hbntex.com</span>
-    </div>
-  </footer>
+  <!-- Modal: Platform info -->
+  <div class="modal" id="infoModal" aria-hidden="true">
+    <div class="modal__backdrop" id="infoBackdrop"></div>
 
+    <div class="modal__card modal__card--sm" role="dialog" aria-modal="true" aria-label="Platforma qaydası">
+      <div class="modal__head">
+        <div class="modal__title">Platforma nə edir</div>
+        <button class="iconbtn iconbtn--close" id="infoClose" type="button" aria-label="Bağla">×</button>
+      </div>
+
+      <div class="modal__content">
+        <div class="info">
+          <p><b>Heyksans Technology</b> platforması peşəkarların işlərini təqdim etdiyi portfolio və tanıtım məkanıdır.</p>
+          <ul class="info__list">
+            <li>Profil yaradırsan</li>
+            <li>Portfolio yerləşdirirsən</li>
+            <li>Müştəri səni axtarışla tapır</li>
+            <li>Əlaqə düymələri ilə birbaşa yazır</li>
+          </ul>
+          <p class="muted">Gələcəkdə: takip, premium və reklam bölmələri əlavə oluna bilər.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
   <script src="script.js"></script>
 </body>
 </html>
