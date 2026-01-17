@@ -2,442 +2,434 @@
 "use strict";
 
 /* =========================================================
-   HEYKSANS TECHNOLOGY — GitHub Pages üçün işlək UI bazası
-   Qeyd: Bu versiyada login/profil UI var, amma real auth yoxdur.
-   Firebase qoşanda (Auth + Firestore + Storage) tam sistem olacaq.
+   HEYKSANS TECHNOLOGY — GitHub Pages üçün tam işlək baza
+   - NÜMUNƏ PROFİL YOXDUR
+   - Qeydiyyat formu ilə profil yaradılır
+   - Profil localStorage-da saxlanır (GitHub Pages üçün real çıxış)
+   - Portfolio: şəkil linki + başlıq + izah əlavə olunur
+   Qeyd: Firebase qoşanda localStorage yerinə DB olacaq.
 ========================================================= */
 
-/* ---------------- DOM helpers ---------------- */
+/* ---------- DOM ---------- */
 const $ = (id) => document.getElementById(id);
 
-/* ---------------- Elements ---------------- */
-const q = $("q");
-const clearSearch = $("clearSearch");
-const chips = $("chips");
-const grid = $("grid");
-const resultCount = $("resultCount");
-
-const emptyPreview = $("emptyPreview");
-const previewWrap = $("preview");
-
-const pCover = $("pCover");
-const pAvatar = $("pAvatar");
-const pName = $("pName");
-const pRole = $("pRole");
-const pTags = $("pTags");
-const pBio = $("pBio");
-const pGallery = $("pGallery");
-const pWhatsapp = $("pWhatsapp");
-const pInstagram = $("pInstagram");
-const pEmail = $("pEmail");
-const openProfile = $("openProfile");
-const orderBtn = $("orderBtn");
-
+/* Buttons / inputs */
 const btnLogin = $("btnLogin");
 const btnRegister = $("btnRegister");
-
+const createFirst = $("createFirst");
 const openAuthFromEmpty = $("openAuthFromEmpty");
 const learnMore = $("learnMore");
 
-/* Profile modal */
-const modal = $("modal");
-const modalBackdrop = $("modalBackdrop");
-const closeModal = $("closeModal");
+const q = $("q");
+const clearSearch = $("clearSearch");
+const resultCount = $("resultCount");
 
-const mTitle = $("mTitle");
-const mAvatar = $("mAvatar");
-const mName = $("mName");
-const mRole = $("mRole");
-const mTags = $("mTags");
-const mBio = $("mBio");
-const mGallery = $("mGallery");
-const mWhatsapp = $("mWhatsapp");
-const mInstagram = $("mInstagram");
-const mEmail = $("mEmail");
-const mUser = $("mUser");
-const mCat = $("mCat");
-
-/* Auth modal */
+/* Modals */
 const authModal = $("authModal");
 const authBackdrop = $("authBackdrop");
 const authClose = $("authClose");
 const tabLogin = $("tabLogin");
 const tabRegister = $("tabRegister");
 const authTitle = $("authTitle");
-const authSubmit = $("authSubmit");
 const authForm = $("authForm");
-const googleBtn = $("googleBtn");
 const authHint = $("authHint");
 
-/* Info modal */
 const infoModal = $("infoModal");
 const infoBackdrop = $("infoBackdrop");
 const infoClose = $("infoClose");
 
-/* ---------------- State ---------------- */
-const state = {
-  activeCategory: "Hamısı",
-  query: "",
-  selectedId: null,
-  authMode: "login",
-};
+/* Form fields */
+const fullName = $("fullName");
+const job = $("job");
+const bio = $("bio");
+const whatsapp = $("whatsapp");
+const instagram = $("instagram");
 
-/* ---------------- Demo data (opsional) ----------------
-   İstəmirsənsə: DEMO_MODE = false et, kataloq boş olacaq.
--------------------------------------------------------- */
-const DEMO_MODE = true;
+/* ---------- Storage keys ---------- */
+const KEY_PROFILE = "heyksans_profile_v1";
+const KEY_PORTFOLIO = "heyksans_portfolio_v1";
 
-const DATA = DEMO_MODE ? [
-  {
-    id: "ayan",
-    name: "Ayan Məmmədzadə",
-    username: "ayan_design",
-    category: "Dizayn",
-    role: "Qrafik Dizayner",
-    tags: ["Loqo", "Brend", "Poster"],
-    bio: "Brend kimliyi, loqo sistemləri və sosial media dizaynları hazırlayıram.",
-    whatsapp: "https://wa.me/994000000000",
-    instagram: "https://instagram.com/",
-    email: "mailto:example@email.com",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=320&q=80",
-    cover: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80",
-    portfolio: [
-      { img: "https://images.unsplash.com/photo-1526481280695-3c687fd643ed?auto=format&fit=crop&w=900&q=80", title: "Poster", desc: "Təqdimat poster işi" },
-      { img: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=900&q=80", title: "Loqo", desc: "Minimal loqo konsepti" },
-      { img: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=900&q=80", title: "Brend", desc: "Brend kimliyi paketi" },
-    ],
-  },
-  {
-    id: "samira",
-    name: "Samirə Abbasova",
-    username: "samira_photo",
-    category: "Foto",
-    role: "Fotoqraf",
-    tags: ["Portret", "Studia", "Retuş"],
-    bio: "Portret və studia çəkilişləri. Təmiz işıq və təbii rəng balansı.",
-    whatsapp: "https://wa.me/994000000001",
-    instagram: "https://instagram.com/",
-    email: "mailto:example@email.com",
-    avatar: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=320&q=80",
-    cover: "https://images.unsplash.com/photo-1520975958225-748215ed0f3f?auto=format&fit=crop&w=1400&q=80",
-    portfolio: [
-      { img: "https://images.unsplash.com/photo-1520975958225-748215ed0f3f?auto=format&fit=crop&w=900&q=80", title: "Portret", desc: "Studia portreti" },
-      { img: "https://images.unsplash.com/photo-1520975958225-748215ed0f3f?auto=format&fit=crop&w=900&q=80", title: "Retuş", desc: "Təmiz retuş nümunəsi" },
-      { img: "https://images.unsplash.com/photo-1520975958225-748215ed0f3f?auto=format&fit=crop&w=900&q=80", title: "Kadr", desc: "İşıq kompozisiyası" },
-    ],
-  },
-] : [];
-
-/* ---------------- Init ---------------- */
+/* ---------- Init ---------- */
 init();
 
 function init() {
-  bindEvents();
-  renderChips();
-  renderGrid();
-  if (!DATA.length) showEmptyPreview();
+  bind();
+  loadAndRender();
 }
 
-/* ---------------- Events ---------------- */
-function bindEvents() {
-  q?.addEventListener("input", () => {
-    state.query = (q.value || "").trim();
-    renderGrid();
-  });
-
-  clearSearch?.addEventListener("click", () => {
-    if (q) q.value = "";
-    state.query = "";
-    renderGrid();
-    q?.focus();
-  });
-
-  btnLogin?.addEventListener("click", () => openAuthModal("login"));
+/* ---------- Bind events ---------- */
+function bind() {
   btnRegister?.addEventListener("click", () => openAuthModal("register"));
+  btnLogin?.addEventListener("click", () => openAuthModal("login"));
+
+  createFirst?.addEventListener("click", () => openAuthModal("register"));
   openAuthFromEmpty?.addEventListener("click", () => openAuthModal("register"));
 
   learnMore?.addEventListener("click", openInfoModal);
+  infoClose?.addEventListener("click", closeInfoModal);
+  infoBackdrop?.addEventListener("click", closeInfoModal);
 
-  // Profile modal
-  openProfile?.addEventListener("click", () => {
-    const u = getSelected();
-    if (u) openProfileModal(u);
-  });
-
-  orderBtn?.addEventListener("click", () => {
-    const u = getSelected();
-    if (!u) return;
-    // Prioritet WhatsApp
-    if (u.whatsapp && u.whatsapp !== "#") window.open(u.whatsapp, "_blank", "noopener");
-  });
-
-  closeModal?.addEventListener("click", closeProfileModal);
-  modalBackdrop?.addEventListener("click", closeProfileModal);
-
-  // Auth modal
   authClose?.addEventListener("click", closeAuthModal);
   authBackdrop?.addEventListener("click", closeAuthModal);
 
   tabLogin?.addEventListener("click", () => setAuthMode("login"));
   tabRegister?.addEventListener("click", () => setAuthMode("register"));
 
-  authForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    authHint.textContent = "Bu UI bazadır. Firebase qoşulanda giriş/qeydiyyat real işləyəcək.";
+  authForm?.addEventListener("submit", onAuthSubmit);
+
+  q?.addEventListener("input", () => {
+    // Bu mərhələdə kataloq olmadığı üçün yalnız UI qalır
+    // gələcəkdə katalog əlavə ediləndə işlədiləcək
+    updateCount(0);
   });
 
-  googleBtn?.addEventListener("click", () => {
-    authHint.textContent = "Google giriş Firebase ilə aktivləşəcək.";
+  clearSearch?.addEventListener("click", () => {
+    if (q) q.value = "";
+    updateCount(0);
   });
 
-  // Info modal
-  infoClose?.addEventListener("click", closeInfoModal);
-  infoBackdrop?.addEventListener("click", closeInfoModal);
-
-  // ESC
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      closeProfileModal();
       closeAuthModal();
       closeInfoModal();
     }
   });
 }
 
-/* ---------------- Chips (Categories) ---------------- */
-function renderChips() {
-  const cats = ["Hamısı", ...unique(DATA.map(x => x.category))];
-  chips.innerHTML = cats.map(c => {
-    const active = c === state.activeCategory ? "is-active" : "";
-    return `<button class="chip ${active}" type="button" data-cat="${esc(c)}">${esc(c)}</button>`;
-  }).join("");
+/* ---------- Auth submit (profile create) ---------- */
+function onAuthSubmit(e) {
+  e.preventDefault();
 
-  chips.querySelectorAll(".chip").forEach(btn => {
+  // Mode:
+  // login = bu baza mərhələsində yalnız "profil varsa göstər" kimi işləyir
+  // register = profil yaradır
+  const mode = currentAuthMode();
+
+  if (mode === "login") {
+    const p = readProfile();
+    if (!p) {
+      authHint.textContent = "Profil tapılmadı. Qeydiyyat bölməsindən profil yaradın.";
+      return;
+    }
+    authHint.textContent = "Profil mövcuddur. Aşağıda profil bölməsi aktivdir.";
+    closeAuthModal();
+    loadAndRender();
+    return;
+  }
+
+  // register mode: validate required
+  const nameVal = (fullName?.value || "").trim();
+  const jobVal = (job?.value || "").trim();
+  const bioVal = (bio?.value || "").trim();
+
+  if (!nameVal || !jobVal || !bioVal) {
+    authHint.textContent = "Ad Soyad, Peşə və Haqqımda sahələri mütləqdir.";
+    return;
+  }
+
+  const profile = {
+    id: "me",
+    name: nameVal,
+    role: jobVal,
+    bio: bioVal,
+    whatsapp: (whatsapp?.value || "").trim(),
+    instagram: (instagram?.value || "").trim(),
+    createdAt: Date.now(),
+  };
+
+  writeProfile(profile);
+
+  // İlk dəfə portfolio boş saxlanılır
+  if (!readPortfolio()) writePortfolio([]);
+
+  authHint.textContent = "Profil yaradıldı. İndi portfolio əlavə edə bilərsiniz.";
+  closeAuthModal();
+  loadAndRender();
+}
+
+/* ---------- Render: create a real working profile UI ---------- */
+function loadAndRender() {
+  const profile = readProfile();
+  if (!profile) {
+    // Profil yoxdur → saytda boş görünüş qalır
+    updateCount(0);
+    return;
+  }
+
+  // Profil var → səhifəyə “Hazır Profil Paneli” əlavə edirik (tam işlək)
+  ensureProfileSection(profile);
+  updateCount(1);
+}
+
+/* ---------- Create / Update Profile section in DOM ---------- */
+function ensureProfileSection(profile) {
+  // Əgər artıq varsa yenilə
+  let section = document.getElementById("myProfileSection");
+  if (!section) {
+    section = document.createElement("section");
+    section.id = "myProfileSection";
+    section.className = "wrap myProfile";
+
+    section.innerHTML = `
+      <div class="myProfile__card">
+        <div class="myProfile__head">
+          <div class="myProfile__title">Mənim Profilim</div>
+          <div class="myProfile__actions">
+            <button class="btn btn--ghost btn--sm" id="editProfileBtn" type="button">Redaktə</button>
+            <button class="btn btn--ghost btn--sm" id="logoutBtn" type="button">Çıxış</button>
+          </div>
+        </div>
+
+        <div class="myProfile__grid">
+          <div>
+            <div class="myProfile__name" id="p_name"></div>
+            <div class="myProfile__role" id="p_role"></div>
+            <div class="myProfile__bio" id="p_bio"></div>
+
+            <div class="myProfile__links">
+              <a class="btn btn--primary btn--sm" id="p_whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+              <a class="btn btn--ghost btn--sm" id="p_instagram" target="_blank" rel="noopener">Instagram</a>
+            </div>
+          </div>
+
+          <div class="myProfile__portfolio">
+            <div class="myProfile__subhead">
+              <div class="myProfile__subtitle">Portfolio</div>
+              <button class="btn btn--primary btn--sm" id="addWorkBtn" type="button">İş əlavə et</button>
+            </div>
+
+            <div class="workForm" id="workForm" style="display:none;">
+              <div class="workForm__row">
+                <input class="field__input" id="workImg" placeholder="Şəkil linki (https://...)" />
+              </div>
+              <div class="workForm__row">
+                <input class="field__input" id="workTitle" placeholder="Başlıq" />
+              </div>
+              <div class="workForm__row">
+                <textarea class="field__input" id="workDesc" placeholder="Qısa izah"></textarea>
+              </div>
+              <div class="workForm__actions">
+                <button class="btn btn--primary btn--sm" id="saveWorkBtn" type="button">Saxla</button>
+                <button class="btn btn--ghost btn--sm" id="cancelWorkBtn" type="button">Ləğv et</button>
+              </div>
+              <div class="hint" id="workHint" style="margin-top:10px;">Şəkil linki mütləq https:// ilə başlamalıdır.</div>
+            </div>
+
+            <div class="workGrid" id="workGrid"></div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Səhifənin sonunda əlavə edək (main-dən sonra)
+    const main = document.querySelector("main");
+    if (main && main.parentElement) main.parentElement.insertBefore(section, main.nextSibling);
+    else document.body.appendChild(section);
+  }
+
+  // Fill profile data
+  $("p_name").textContent = profile.name;
+  $("p_role").textContent = profile.role;
+  $("p_bio").textContent = profile.bio;
+
+  // Links
+  const w = $("p_whatsapp");
+  const i = $("p_instagram");
+
+  if (profile.whatsapp) {
+    w.href = profile.whatsapp;
+    w.style.display = "inline-flex";
+  } else {
+    w.href = "#";
+    w.style.display = "none";
+  }
+
+  if (profile.instagram) {
+    i.href = profile.instagram;
+    i.style.display = "inline-flex";
+  } else {
+    i.href = "#";
+    i.style.display = "none";
+  }
+
+  // Bind buttons
+  $("logoutBtn").onclick = () => {
+    // “Çıxış” = localStorage profil silinsin
+    localStorage.removeItem(KEY_PROFILE);
+    localStorage.removeItem(KEY_PORTFOLIO);
+    location.reload();
+  };
+
+  $("editProfileBtn").onclick = () => {
+    // Edit: auth modal-da form doldurulsun
+    openAuthModal("register");
+    fullName.value = profile.name || "";
+    job.value = profile.role || "";
+    bio.value = profile.bio || "";
+    whatsapp.value = profile.whatsapp || "";
+    instagram.value = profile.instagram || "";
+    authHint.textContent = "Məlumatı dəyişin və “Profil yarat” düyməsi ilə yeniləyin.";
+  };
+
+  // Portfolio render + actions
+  renderPortfolio();
+  bindPortfolioActions();
+}
+
+/* ---------- Portfolio ---------- */
+function bindPortfolioActions() {
+  const addBtn = $("addWorkBtn");
+  const form = $("workForm");
+  const saveBtn = $("saveWorkBtn");
+  const cancelBtn = $("cancelWorkBtn");
+
+  addBtn.onclick = () => {
+    form.style.display = "block";
+    $("workImg").value = "";
+    $("workTitle").value = "";
+    $("workDesc").value = "";
+  };
+
+  cancelBtn.onclick = () => {
+    form.style.display = "none";
+  };
+
+  saveBtn.onclick = () => {
+    const img = ($("workImg").value || "").trim();
+    const title = ($("workTitle").value || "").trim();
+    const desc = ($("workDesc").value || "").trim();
+
+    if (!img || !img.startsWith("http")) {
+      $("workHint").textContent = "Şəkil linki düzgün deyil. Mütləq https://... olmalıdır.";
+      return;
+    }
+    if (!title) {
+      $("workHint").textContent = "Başlıq boş ola bilməz.";
+      return;
+    }
+
+    const list = readPortfolio() || [];
+    list.unshift({
+      id: cryptoId(),
+      img,
+      title,
+      desc,
+      createdAt: Date.now(),
+    });
+
+    writePortfolio(list);
+    $("workHint").textContent = "İş əlavə olundu.";
+    form.style.display = "none";
+    renderPortfolio();
+  };
+}
+
+function renderPortfolio() {
+  const grid = $("workGrid");
+  if (!grid) return;
+
+  const list = readPortfolio() || [];
+  if (!list.length) {
+    grid.innerHTML = `
+      <div class="emptyList" style="margin-top:10px;">
+        <div class="emptyList__title">Portfolio boşdur</div>
+        <div class="emptyList__text">“İş əlavə et” düyməsi ilə ilk işi yerləşdir.</div>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = list.map(item => `
+    <div class="workCard">
+      <div class="workCard__img">
+        <img src="${esc(item.img)}" alt="${esc(item.title)}" loading="lazy">
+      </div>
+      <div class="workCard__meta">
+        <div class="workCard__title">${esc(item.title)}</div>
+        ${item.desc ? `<div class="workCard__desc">${esc(item.desc)}</div>` : ``}
+      </div>
+      <div class="workCard__actions">
+        <button class="btn btn--ghost btn--sm" data-del="${esc(item.id)}" type="button">Sil</button>
+      </div>
+    </div>
+  `).join("");
+
+  // delete handlers
+  grid.querySelectorAll("[data-del]").forEach(btn => {
     btn.addEventListener("click", () => {
-      state.activeCategory = btn.dataset.cat || "Hamısı";
-      chips.querySelectorAll(".chip").forEach(b => b.classList.toggle("is-active", b === btn));
-      renderGrid();
+      const id = btn.getAttribute("data-del");
+      const list2 = (readPortfolio() || []).filter(x => x.id !== id);
+      writePortfolio(list2);
+      renderPortfolio();
     });
   });
 }
 
-/* ---------------- Grid (Profiles) ---------------- */
-function renderGrid() {
-  const list = filterData(DATA, state.query, state.activeCategory);
-  if (resultCount) resultCount.textContent = String(list.length);
-
-  if (!list.length) {
-    grid.innerHTML = emptyGridHTML();
-    state.selectedId = null;
-    showEmptyPreview();
-    return;
-  }
-
-  grid.innerHTML = list.map(u => userCard(u)).join("");
-
-  grid.querySelectorAll(".cardUser").forEach(card => {
-    card.addEventListener("click", () => selectUser(card.dataset.id));
-  });
-
-  // Auto-select
-  if (!state.selectedId || !list.some(x => x.id === state.selectedId)) {
-    selectUser(list[0].id, true);
-  }
-}
-
-function emptyGridHTML() {
-  return `
-    <div class="emptyList">
-      <div class="emptyList__title">Hələ profil yoxdur</div>
-      <div class="emptyList__text">Qeydiyyat edib ilk profili yarada bilərsən.</div>
-      <button class="btn btn--primary btn--sm" type="button" id="createFirst">Profil yarat</button>
-    </div>
-  `;
-}
-
-function userCard(u) {
-  const active = u.id === state.selectedId ? "is-active" : "";
-  return `
-    <div class="cardUser ${active}" data-id="${esc(u.id)}" role="button" tabindex="0">
-      <div class="cardUser__row">
-        <div class="avatar">
-          <img src="${esc(u.avatar)}" alt="${esc(u.name)}" loading="lazy" />
-        </div>
-        <div class="cardUser__meta">
-          <div class="cardUser__name">${esc(u.name)}</div>
-          <div class="cardUser__role">${esc(u.role)}</div>
-        </div>
-      </div>
-      <div class="cardUser__chips">
-        <span class="mini">${esc(u.category)}</span>
-        ${u.tags.slice(0, 2).map(t => `<span class="mini">${esc(t)}</span>`).join("")}
-      </div>
-    </div>
-  `;
-}
-
-/* ---------------- Select + Preview ---------------- */
-function selectUser(id, silent = false) {
-  state.selectedId = id;
-
-  document.querySelectorAll(".cardUser").forEach(c => {
-    c.classList.toggle("is-active", c.dataset.id === id);
-  });
-
-  const u = getSelected();
-  if (!u) {
-    showEmptyPreview();
-    return;
-  }
-  fillPreview(u);
-
-  if (!silent) {
-    // no-op
-  }
-}
-
-function getSelected() {
-  return DATA.find(x => x.id === state.selectedId) || null;
-}
-
-function showEmptyPreview() {
-  if (emptyPreview) emptyPreview.hidden = false;
-  if (previewWrap) previewWrap.hidden = true;
-
-  // empty grid action hook
-  const btn = document.getElementById("createFirst");
-  btn?.addEventListener("click", () => openAuthModal("register"));
-}
-
-function fillPreview(u) {
-  if (emptyPreview) emptyPreview.hidden = true;
-  if (previewWrap) previewWrap.hidden = false;
-
-  setImg(pCover, u.cover, `${u.name} cover`);
-  setImg(pAvatar, u.avatar, u.name);
-
-  if (pName) pName.textContent = u.name;
-  if (pRole) pRole.textContent = u.role;
-
-  if (pTags) pTags.innerHTML = u.tags.map(t => `<span class="tag">${esc(t)}</span>`).join("");
-
-  if (pBio) pBio.textContent = u.bio;
-
-  if (pWhatsapp) pWhatsapp.href = u.whatsapp || "#";
-  if (pInstagram) pInstagram.href = u.instagram || "#";
-  if (pEmail) pEmail.href = u.email || "#";
-
-  if (pGallery) {
-    pGallery.innerHTML = u.portfolio.slice(0, 6).map(item => galleryItem(item, u.name)).join("");
-  }
-}
-
-function galleryItem(item, name) {
-  const title = item.title ? `<div class="gMeta__t">${esc(item.title)}</div>` : "";
-  const desc = item.desc ? `<div class="gMeta__d">${esc(item.desc)}</div>` : "";
-  return `
-    <div class="gItem" role="button" tabindex="0" title="${esc(item.title || "")}">
-      <img src="${esc(item.img)}" alt="${esc(name)} işi" loading="lazy" />
-      <div class="gMeta">
-        ${title}
-        ${desc}
-      </div>
-    </div>
-  `;
-}
-
-/* ---------------- Profile modal ---------------- */
-function openProfileModal(u) {
-  if (mTitle) mTitle.textContent = `@${u.username}`;
-  setImg(mAvatar, u.avatar, u.name);
-
-  if (mName) mName.textContent = u.name;
-  if (mRole) mRole.textContent = u.role;
-
-  if (mTags) mTags.innerHTML = u.tags.map(t => `<span class="tag">${esc(t)}</span>`).join("");
-  if (mBio) mBio.textContent = u.bio;
-
-  if (mWhatsapp) mWhatsapp.href = u.whatsapp || "#";
-  if (mInstagram) mInstagram.href = u.instagram || "#";
-  if (mEmail) mEmail.href = u.email || "#";
-
-  if (mUser) mUser.textContent = `@${u.username}`;
-  if (mCat) mCat.textContent = u.category;
-
-  if (mGallery) {
-    mGallery.innerHTML = u.portfolio.map(item => galleryItem(item, u.name)).join("");
-  }
-
-  modal?.classList.add("is-open");
-  modal?.setAttribute("aria-hidden", "false");
-}
-
-function closeProfileModal() {
-  modal?.classList.remove("is-open");
-  modal?.setAttribute("aria-hidden", "true");
-}
-
-/* ---------------- Auth modal (UI) ---------------- */
+/* ---------- Auth mode helpers ---------- */
 function openAuthModal(mode) {
   setAuthMode(mode);
-  authModal?.classList.add("is-open");
-  authModal?.setAttribute("aria-hidden", "false");
+  authModal.classList.add("is-open");
+  authModal.setAttribute("aria-hidden", "false");
 }
 
 function closeAuthModal() {
-  authModal?.classList.remove("is-open");
-  authModal?.setAttribute("aria-hidden", "true");
+  authModal.classList.remove("is-open");
+  authModal.setAttribute("aria-hidden", "true");
 }
 
 function setAuthMode(mode) {
   state.authMode = mode;
 
-  tabLogin?.classList.toggle("is-active", mode === "login");
-  tabRegister?.classList.toggle("is-active", mode === "register");
+  tabLogin.classList.toggle("is-active", mode === "login");
+  tabRegister.classList.toggle("is-active", mode === "register");
 
-  if (authTitle) authTitle.textContent = mode === "login" ? "Giriş" : "Qeydiyyat";
-  if (authSubmit) authSubmit.textContent = mode === "login" ? "Daxil ol" : "Hesab yarat";
-  if (authHint) authHint.textContent = "Qeyd: Bu HTML bazadır. Firebase qoşulanda giriş və profil real işləyəcək.";
+  authTitle.textContent = (mode === "login") ? "Giriş" : "Qeydiyyat / Profil";
+  $("authSubmit").textContent = (mode === "login") ? "Daxil ol" : "Profil yarat / yenilə";
+  authHint.textContent = "Bu mərhələdə məlumatlar cihazda saxlanır (localStorage).";
 }
 
-/* ---------------- Info modal ---------------- */
+function currentAuthMode() {
+  return state.authMode || "login";
+}
+
+/* ---------- Info modal ---------- */
 function openInfoModal() {
-  infoModal?.classList.add("is-open");
-  infoModal?.setAttribute("aria-hidden", "false");
+  infoModal.classList.add("is-open");
+  infoModal.setAttribute("aria-hidden", "false");
 }
+
 function closeInfoModal() {
-  infoModal?.classList.remove("is-open");
-  infoModal?.setAttribute("aria-hidden", "true");
+  infoModal.classList.remove("is-open");
+  infoModal.setAttribute("aria-hidden", "true");
 }
 
-/* ---------------- Utils ---------------- */
-function filterData(list, query, category) {
-  const qq = (query || "").toLowerCase();
-  return list.filter(u => {
-    const catOk = category === "Hamısı" || u.category === category;
-    if (!catOk) return false;
-    if (!qq) return true;
-
-    const hay = [
-      u.name,
-      u.username,
-      u.category,
-      u.role,
-      (u.tags || []).join(" "),
-    ].join(" ").toLowerCase();
-
-    return hay.includes(qq);
-  });
+/* ---------- Storage ---------- */
+function readProfile() {
+  try {
+    const raw = localStorage.getItem(KEY_PROFILE);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+function writeProfile(profile) {
+  localStorage.setItem(KEY_PROFILE, JSON.stringify(profile));
+}
+function readPortfolio() {
+  try {
+    const raw = localStorage.getItem(KEY_PORTFOLIO);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+function writePortfolio(list) {
+  localStorage.setItem(KEY_PORTFOLIO, JSON.stringify(list));
 }
 
-function unique(arr) {
-  return [...new Set(arr)];
-}
-
-function setImg(el, src, alt) {
-  if (!el) return;
-  el.src = src || "";
-  el.alt = alt || "";
+/* ---------- Misc ---------- */
+function updateCount(n) {
+  if (resultCount) resultCount.textContent = String(n);
 }
 
 function esc(s) {
@@ -449,9 +441,7 @@ function esc(s) {
     .replaceAll("'", "&#39;");
 }
 
-/* ---------------- Boot: empty list button hook ---------------- */
-document.addEventListener("click", (e) => {
-  const t = e.target;
-  if (!(t instanceof HTMLElement)) return;
-  if (t.id === "createFirst") openAuthModal("register");
-});
+function cryptoId() {
+  // GitHub Pages üçün sadə id
+  return "id_" + Math.random().toString(16).slice(2) + Date.now().toString(16);
+}
