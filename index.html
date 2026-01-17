@@ -17,15 +17,16 @@
     <div class="bg__noise"></div>
   </div>
 
-  <!-- Top -->
+  <!-- NAVBAR -->
   <header class="top">
     <div class="wrap top__row">
-
-      <!-- DÜZƏLDİLMİŞ LOQO HİSSƏSİ -->
-      <a class="brand" href="#" aria-label="Heyksans Technology">
-        <div class="brand__logo-wrap">
-          <img class="brand__logo" src="assets/brand_logo.png" alt="Heyksans Technology loqosu">
-        </div>
+      <a class="brand" href="index.html" aria-label="Heyksans Technology">
+        <!-- LOQO ADI DƏQİQ: assets/brand_logo.png -->
+        <img class="brand__logo" src="assets/brand_logo.png" alt="Heyksans Technology loqosu" />
+        <span class="brand__text">
+          <span class="brand__name">HEYKSANS</span>
+          <span class="brand__sub">TECHNOLOGY</span>
+        </span>
       </a>
 
       <nav class="top__actions" aria-label="Hesab">
@@ -35,27 +36,36 @@
     </div>
   </header>
 
+  <!-- MAIN -->
   <main class="wrap main">
-    <!-- Left -->
+    <!-- SOL: Kataloq -->
     <section class="panel panel--explore" aria-label="Kəşf et">
       <div class="panel__head">
         <h1 class="h1">Heyksans Technology Platforması</h1>
-        <p class="muted">İstifadəçi qeydiyyatdan keçir, profil yaradır və portfolio yerləşdirir.</p>
+        <p class="muted">
+          Qeydiyyat → Profil → Portfolio. İstifadəçi öz işlərini yerləşdirir və əlaqə linklərini əlavə edir.
+        </p>
       </div>
 
       <div class="search" role="search">
         <span class="search__icon" aria-hidden="true">⌕</span>
-        <input id="q" class="search__input" type="search" placeholder="Axtarış (hazırda demo rejim)" autocomplete="off" />
+        <input
+          id="q"
+          class="search__input"
+          type="search"
+          placeholder="Axtarış (ad / peşə / kateqoriya)"
+          autocomplete="off"
+        />
         <button class="search__clear" id="clearSearch" type="button" aria-label="Təmizlə">×</button>
       </div>
 
       <div class="chips" id="chips" aria-label="Kateqoriyalar">
-        <button class="chip is-active" type="button">Hamısı</button>
-        <button class="chip" type="button">Dizayn</button>
-        <button class="chip" type="button">Foto</button>
-        <button class="chip" type="button">Video</button>
-        <button class="chip" type="button">SMM</button>
-        <button class="chip" type="button">Proqramlaşdırma</button>
+        <button class="chip is-active" type="button" data-cat="Hamısı">Hamısı</button>
+        <button class="chip" type="button" data-cat="Dizayn">Dizayn</button>
+        <button class="chip" type="button" data-cat="Foto">Foto</button>
+        <button class="chip" type="button" data-cat="Video">Video</button>
+        <button class="chip" type="button" data-cat="SMM">SMM</button>
+        <button class="chip" type="button" data-cat="Proqramlaşdırma">Proqramlaşdırma</button>
       </div>
 
       <div class="section">
@@ -64,20 +74,26 @@
           <span class="pill" id="resultCount">0</span>
         </div>
 
-        <div class="emptyList">
-          <div class="emptyList__title">Hələ profil yoxdur</div>
-          <div class="emptyList__text">Qeydiyyat edib ilk profili yarada bilərsən.</div>
-          <button class="btn btn--primary btn--sm" id="createFirst" type="button">Profil yarat</button>
+        <!-- NÜMUNƏ PROFİL YOXDUR: profillər yalnız real istifadəçi yaradanda görünür -->
+        <div id="profilesArea">
+          <div class="emptyList">
+            <div class="emptyList__title">Hələ profil yoxdur</div>
+            <div class="emptyList__text">Qeydiyyat edib ilk profili yarada bilərsən.</div>
+            <button class="btn btn--primary btn--sm" id="createFirst" type="button">Profil yarat</button>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Right -->
-    <aside class="panel panel--preview" aria-label="Profil">
+    <!-- SAĞ: Məlumat paneli -->
+    <aside class="panel panel--preview" aria-label="Məlumat">
       <div class="preview__empty" id="emptyPreview">
-        <div class="preview__badge">Profil</div>
-        <h2 class="h2">Hələ profil yaradılmayıb</h2>
-        <p class="muted">Qeydiyyat edib profil yaradandan sonra burada görünəcək.</p>
+        <div class="preview__badge">Platforma</div>
+        <h2 class="h2">İşləmə qaydası</h2>
+        <p class="muted">
+          Bu platformada hər istifadəçi öz profilini yaradır və portfolio yerləşdirir.
+          Müştəri axtarışla tapır və WhatsApp/Instagram ilə əlaqə saxlayır.
+        </p>
 
         <div class="emptyActions">
           <button class="btn btn--primary" id="openAuthFromEmpty" type="button">Qeydiyyat</button>
@@ -86,6 +102,96 @@
       </div>
     </aside>
   </main>
+
+  <!-- AUTH MODAL -->
+  <div class="modal" id="authModal" aria-hidden="true">
+    <div class="modal__backdrop" id="authBackdrop"></div>
+
+    <div class="modal__card modal__card--sm" role="dialog" aria-modal="true" aria-label="Hesab">
+      <div class="modal__head">
+        <div class="modal__title" id="authTitle">Qeydiyyat / Profil</div>
+        <button class="iconbtn iconbtn--close" id="authClose" type="button" aria-label="Bağla">×</button>
+      </div>
+
+      <div class="modal__content">
+        <div class="auth">
+          <div class="auth__tabs">
+            <button class="tab" id="tabLogin" type="button">Giriş</button>
+            <button class="tab is-active" id="tabRegister" type="button">Qeydiyyat</button>
+          </div>
+
+          <form class="auth__form" id="authForm">
+            <label class="field">
+              <span class="field__label">Ad Soyad</span>
+              <input class="field__input" type="text" id="fullName" placeholder="Ad Soyad" required />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Peşə</span>
+              <input class="field__input" type="text" id="job" placeholder="Məs: Dizayner" required />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Kateqoriya</span>
+              <select class="field__input" id="category" required>
+                <option value="Dizayn">Dizayn</option>
+                <option value="Foto">Foto</option>
+                <option value="Video">Video</option>
+                <option value="SMM">SMM</option>
+                <option value="Proqramlaşdırma">Proqramlaşdırma</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Haqqımda</span>
+              <textarea class="field__input" id="bio" placeholder="Qısa təsvir" required></textarea>
+            </label>
+
+            <label class="field">
+              <span class="field__label">WhatsApp link</span>
+              <input class="field__input" type="url" id="whatsapp" placeholder="https://wa.me/..." />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Instagram link</span>
+              <input class="field__input" type="url" id="instagram" placeholder="https://instagram.com/..." />
+            </label>
+
+            <button class="btn btn--primary btn--wide" type="submit" id="authSubmit">Profil yarat / yenilə</button>
+          </form>
+
+          <div class="hint" id="authHint">
+            Qeyd: Bu versiyada məlumatlar cihazda saxlanır (localStorage). Firebase qoşulanda real hesab sistemi olacaq.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO MODAL -->
+  <div class="modal" id="infoModal" aria-hidden="true">
+    <div class="modal__backdrop" id="infoBackdrop"></div>
+
+    <div class="modal__card modal__card--sm" role="dialog" aria-modal="true" aria-label="Məlumat">
+      <div class="modal__head">
+        <div class="modal__title">Platforma nə edir</div>
+        <button class="iconbtn iconbtn--close" id="infoClose" type="button" aria-label="Bağla">×</button>
+      </div>
+
+      <div class="modal__content">
+        <div class="info">
+          <p><b>Heyksans Technology Platforması</b> peşəkarların profil və portfolio yaratdığı məkandır.</p>
+          <ul class="info__list">
+            <li>İstifadəçi qeydiyyatdan keçir</li>
+            <li>Profil məlumatlarını doldurur</li>
+            <li>Portfolio işlərini əlavə edir (şəkil + başlıq + izah)</li>
+            <li>Müştəri əlaqə düymələri ilə birbaşa yazır</li>
+          </ul>
+          <p class="muted">Növbəti mərhələ: Firebase ilə real hesab və real axtarış kataloqu.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
