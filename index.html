@@ -20,13 +20,12 @@
   <!-- Top -->
   <header class="top">
     <div class="wrap top__row">
+
+      <!-- DÜZƏLDİLMİŞ LOQO HİSSƏSİ -->
       <a class="brand" href="#" aria-label="Heyksans Technology">
-        <!-- LOQO: assets/brand_logo.png -->
-        <img class="brand__logo" src="assets/brand_logo.png" alt="Heyksans Technology loqosu">
-        <span class="brand__text">
-          <span class="brand__name">HEYKSANS</span>
-          <span class="brand__sub">TECHNOLOGY</span>
-        </span>
+        <div class="brand__logo-wrap">
+          <img class="brand__logo" src="assets/brand_logo.png" alt="Heyksans Technology loqosu">
+        </div>
       </a>
 
       <nav class="top__actions" aria-label="Hesab">
@@ -59,7 +58,6 @@
         <button class="chip" type="button">Proqramlaşdırma</button>
       </div>
 
-      <!-- Empty state (NÜMUNƏ PROFIL YOXDUR) -->
       <div class="section">
         <div class="section__head">
           <h2 class="h2">Profillər</h2>
@@ -88,83 +86,6 @@
       </div>
     </aside>
   </main>
-
-  <!-- Auth Modal (UI) -->
-  <div class="modal" id="authModal" aria-hidden="true">
-    <div class="modal__backdrop" id="authBackdrop"></div>
-
-    <div class="modal__card modal__card--sm" role="dialog" aria-modal="true" aria-label="Hesab">
-      <div class="modal__head">
-        <div class="modal__title" id="authTitle">Qeydiyyat</div>
-        <button class="iconbtn iconbtn--close" id="authClose" type="button" aria-label="Bağla">×</button>
-      </div>
-
-      <div class="modal__content">
-        <div class="auth">
-          <div class="auth__tabs">
-            <button class="tab" id="tabLogin" type="button">Giriş</button>
-            <button class="tab is-active" id="tabRegister" type="button">Qeydiyyat</button>
-          </div>
-
-          <form class="auth__form" id="authForm">
-            <label class="field">
-              <span class="field__label">Ad Soyad</span>
-              <input class="field__input" type="text" id="fullName" placeholder="Ad Soyad" required />
-            </label>
-
-            <label class="field">
-              <span class="field__label">Peşə</span>
-              <input class="field__input" type="text" id="job" placeholder="Məs: Dizayner" required />
-            </label>
-
-            <label class="field">
-              <span class="field__label">Haqqımda</span>
-              <textarea class="field__input" id="bio" placeholder="Qısa təsvir" required></textarea>
-            </label>
-
-            <label class="field">
-              <span class="field__label">WhatsApp link</span>
-              <input class="field__input" type="url" id="whatsapp" placeholder="https://wa.me/..." />
-            </label>
-
-            <label class="field">
-              <span class="field__label">Instagram link</span>
-              <input class="field__input" type="url" id="instagram" placeholder="https://instagram.com/..." />
-            </label>
-
-            <button class="btn btn--primary btn--wide" type="submit" id="authSubmit">Profil yarat</button>
-          </form>
-
-          <div class="hint" id="authHint">
-            Qeyd: Bu GitHub Pages bazasıdır. Bu mərhələdə profil cihazda (localStorage) saxlanır.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Info Modal -->
-  <div class="modal" id="infoModal" aria-hidden="true">
-    <div class="modal__backdrop" id="infoBackdrop"></div>
-
-    <div class="modal__card modal__card--sm" role="dialog" aria-modal="true" aria-label="Məlumat">
-      <div class="modal__head">
-        <div class="modal__title">Platforma nə edir</div>
-        <button class="iconbtn iconbtn--close" id="infoClose" type="button" aria-label="Bağla">×</button>
-      </div>
-      <div class="modal__content">
-        <div class="info">
-          <p><b>Heyksans Technology Platforması</b> peşəkarların profil və portfolio yaratdığı məkan kimi işləyir.</p>
-          <ul class="info__list">
-            <li>Qeydiyyat → profil yaradılır</li>
-            <li>Portfolio → şəkil və məlumat əlavə olunur</li>
-            <li>Əlaqə → WhatsApp/Instagram linkləri</li>
-          </ul>
-          <p class="muted">Növbəti mərhələ: Firebase ilə real hesab sistemi.</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <script src="script.js"></script>
 </body>
